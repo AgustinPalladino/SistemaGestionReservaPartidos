@@ -13,7 +13,7 @@ SistemaGestionReservaPartidos/
 │       ├── Application/
 │       ├── Infrastructure/
 │       └── SistemaGestion.API/
-└── frontend/
+└── frontend/          # React + Vite + MUI (ver frontend/README.md)
 ```
 
 No hace falta cambiar namespaces ni referencias en el código: los `.csproj` siguen enlazándose con rutas relativas (`..\Domain\`, etc.) dentro de `backend/src`.
