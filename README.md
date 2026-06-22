@@ -23,8 +23,9 @@ No hace falta cambiar namespaces ni referencias en el código: los `.csproj` sig
 Desde la carpeta `backend`:
 
 ```powershell
-cd backend\src\SistemaGestion.API
-dotnet run
+cd backend
+dotnet restore
+dotnet run --project src/SistemaGestion.API/SistemaGestion.API.csproj
 ```
 
 O abrir `backend\SistemaGestionReservaPartidos.sln` en Visual Studio / Rider.
@@ -45,6 +46,11 @@ dotnet ef database update `
   --project backend\src\Infrastructure\Infrastructure.csproj `
   --startup-project backend\src\SistemaGestion.API\SistemaGestion.API.csproj
 ```
+
+## Frontend - Ejecutar:
+cd frontend
+npm run dev
+
 
 ## Endpoints principales
 
