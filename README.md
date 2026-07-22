@@ -6,7 +6,7 @@ Monorepo: **backend** (.NET 8 + PostgreSQL) y **frontend** (React + Vite + Mater
 
 ## Sobre el Proyecto y Metodología
 
-Este es mi **primer proyecto integral Full Stack** independiente, desarrollado con el objetivo de construir una aplicación de nivel profesional aplicando las mejores prácticas de la industria en cada etapa del desarrollo.
+Este es mi primer proyecto integral Full Stack independiente, desarrollado con el objetivo de construir una aplicación de nivel profesional aplicando las mejores prácticas de la industria en cada etapa del desarrollo.
 
 Asumí la responsabilidad completa del ciclo de vida del software:
 
