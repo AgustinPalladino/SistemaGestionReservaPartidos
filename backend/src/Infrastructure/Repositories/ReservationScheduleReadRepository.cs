@@ -85,11 +85,14 @@ public class ReservationScheduleReadRepository : IReservationScheduleReadReposit
         CancellationToken cancellationToken = default)
     {
         var blockingStatuses = new[] { MatchStatus.Scheduled, MatchStatus.InProgress };
+        var dayStart = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+        var dayEnd = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc).AddDays(1);
 
         return await _context.Matches
             .AsNoTracking()
             .Where(m => m.FieldId == fieldId
-                     && m.ScheduledAt.Date == date.ToDateTime(TimeOnly.MinValue)
+                     && m.ScheduledAt >= dayStart
+                     && m.ScheduledAt < dayEnd
                      && blockingStatuses.Contains(m.Status))
             .Select(m => m.ScheduledAt)
             .OrderBy(m => m)

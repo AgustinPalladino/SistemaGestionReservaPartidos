@@ -1,6 +1,7 @@
 using Application.Interfaces;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Persistence.Repositories;
+using Application.Models.Reservations;
 
 namespace Application.Services.Reservations;
 
@@ -11,6 +12,10 @@ public class ReservationScheduleService : IReservationScheduleService
 {
     private readonly IScheduleConflictCoordinator _coordinator;
     private readonly IReservationScheduleReadRepository _readRepository;
+
+    private static readonly TimeOnly DayStart = new(6, 0);
+    private static readonly TimeOnly DayEnd = new(22, 0);
+    private static readonly int SlotDurationMinutes = 60;
 
     public ReservationScheduleService(
         IScheduleConflictCoordinator coordinator,
@@ -60,5 +65,64 @@ public class ReservationScheduleService : IReservationScheduleService
                 end,
                 scheduledAt,
                 ScheduleConflictOptions.DefaultMatchDurationMinutes));
+    }
+
+    public async Task<IReadOnlyList<CalendarEventDto>> GetCalendarEventsAsync(
+        int fieldId,
+        int year,
+        int month,
+        CancellationToken cancellationToken = default)
+    {
+        var reservations = await _readRepository.GetReservationsByMonthAsync(fieldId, year, month, cancellationToken);
+        var events = reservations.Select(r => new CalendarEventDto
+        {
+            Id = r.Id,
+            Date = r.Date,
+            StartTime = r.StartTime,
+            EndTime = r.EndTime,
+            Type = "Reservation",
+            Title = $"Reserva {r.StartTime:HH:mm}"
+        }).ToList();
+
+        return events;
+    }
+
+    public async Task<IReadOnlyList<AvailableHourDto>> GetAvailableHoursAsync(
+        int fieldId,
+        DateOnly date,
+        CancellationToken cancellationToken = default)
+    {
+        var reservations = await _readRepository.GetReservationsByDateAsync(fieldId, date, cancellationToken);
+        var matches = await _readRepository.GetMatchesByDateAsync(fieldId, date, cancellationToken);
+
+        var occupied = new List<(TimeOnly Start, TimeOnly End)>();
+        occupied.AddRange(reservations.Select(r => (r.StartTime, r.EndTime)));
+        occupied.AddRange(matches.Select(m =>
+        {
+            var scheduledDate = DateOnly.FromDateTime(m.Date);
+            var scheduledTime = TimeOnly.FromDateTime(m);
+            return (scheduledTime, scheduledTime.AddHours(1));
+        }));
+
+        var slots = new List<AvailableHourDto>();
+        var current = DayStart;
+
+        while (current < DayEnd)
+        {
+            var next = current.AddMinutes(SlotDurationMinutes);
+            var isAvailable = !occupied.Any(o =>
+                current < o.End && o.Start < next);
+
+            slots.Add(new AvailableHourDto
+            {
+                StartTime = current,
+                EndTime = next,
+                IsAvailable = isAvailable
+            });
+
+            current = next;
+        }
+
+        return slots;
     }
 }
