@@ -1,3 +1,5 @@
+using Application.Models.Reservations;
+
 namespace Application.Interfaces;
 
 /// <summary>
@@ -25,5 +27,16 @@ public interface IReservationScheduleService
         TimeOnly start,
         TimeOnly end,
         Guid? excludeReservationId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<CalendarEventDto>> GetCalendarEventsAsync(
+        int fieldId,
+        int year,
+        int month,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<AvailableHourDto>> GetAvailableHoursAsync(
+        int fieldId,
+        DateOnly date,
         CancellationToken cancellationToken = default);
 }

@@ -1,0 +1,16 @@
+C:\SistemaGestionReservaPartidos\backend\src\Application\bin\Debug\net8.0\Application.deps.json
+C:\SistemaGestionReservaPartidos\backend\src\Application\bin\Debug\net8.0\Application.dll
+C:\SistemaGestionReservaPartidos\backend\src\Application\bin\Debug\net8.0\Application.pdb
+C:\SistemaGestionReservaPartidos\backend\src\Application\bin\Debug\net8.0\Domain.dll
+C:\SistemaGestionReservaPartidos\backend\src\Application\bin\Debug\net8.0\Domain.pdb
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.csproj.AssemblyReference.cache
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.AssemblyInfoInputs.cache
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.AssemblyInfo.cs
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.csproj.CoreCompileInputs.cache
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.sourcelink.json
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Applicat.44B5EDA2.Up2Date
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.dll
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\refint\Application.dll
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\Application.pdb
+C:\SistemaGestionReservaPartidos\backend\src\Application\obj\Debug\net8.0\ref\Application.dll

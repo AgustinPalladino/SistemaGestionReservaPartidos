@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "pebsn+dgZlw=",
+  "success": true,
+  "projectFilePath": "C:\\SistemaGestionReservaPartidos\\backend\\src\\Application\\Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\elagu\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.2\\microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}

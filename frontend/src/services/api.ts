@@ -5,6 +5,7 @@ import type { Tournament, TournamentStatus } from '../types/tournament';
 import type { Team } from '../types/team';
 import type { Match, MatchStatus } from '../types/match';
 import type { User, UserRole } from '../types/user';
+import type { AvailableHourDto, CalendarEventDto } from '../types/calendar';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5080/api',
@@ -103,6 +104,14 @@ export const reservationService = {
     api.post<Reservation>('/reservations', data).then((r) => r.data),
   confirm: (id: string) => api.post(`/reservations/${id}/confirm`),
   cancel: (id: string) => api.post(`/reservations/${id}/cancel`),
+  getCalendarEvents: (fieldId: number, year: number, month: number) =>
+    api
+      .get<CalendarEventDto[]>(`/reservations/calendar`, { params: { fieldId, year, month } })
+      .then((r) => r.data),
+  getAvailableHours: (fieldId: number, date: string) =>
+    api
+      .get<AvailableHourDto[]>(`/reservations/available`, { params: { fieldId, date } })
+      .then((r) => r.data),
 };
 
 export const tournamentService = {

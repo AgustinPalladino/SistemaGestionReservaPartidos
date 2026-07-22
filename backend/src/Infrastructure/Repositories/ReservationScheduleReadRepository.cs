@@ -1,4 +1,5 @@
 using Application.Interfaces.Persistence.Repositories;
+using Domain.Entities;
 using Domain.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,57 @@ public class ReservationScheduleReadRepository : IReservationScheduleReadReposit
             .AsNoTracking()
             .Where(m => m.FieldId == fieldId && blockingStatuses.Contains(m.Status))
             .Select(m => m.ScheduledAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Reservation>> GetReservationsByMonthAsync(
+        int fieldId,
+        int year,
+        int month,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Reservations
+            .AsNoTracking()
+            .Where(r => r.FieldId == fieldId
+                     && r.Date.Year == year
+                     && r.Date.Month == month
+                     && r.Status != ReservationStatus.Cancelled)
+            .OrderBy(r => r.Date)
+            .ThenBy(r => r.StartTime)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Reservation>> GetReservationsByDateAsync(
+        int fieldId,
+        DateOnly date,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Reservations
+            .AsNoTracking()
+            .Where(r => r.FieldId == fieldId
+                     && r.Date == date
+                     && r.Status != ReservationStatus.Cancelled)
+            .OrderBy(r => r.StartTime)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<DateTime>> GetMatchesByDateAsync(
+        int fieldId,
+        DateOnly date,
+        CancellationToken cancellationToken = default)
+    {
+        var blockingStatuses = new[] { MatchStatus.Scheduled, MatchStatus.InProgress };
+        var dayStart = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+        var dayEnd = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc).AddDays(1);
+
+        return await _context.Matches
+            .AsNoTracking()
+            .Where(m => m.FieldId == fieldId
+                     && m.ScheduledAt >= dayStart
+                     && m.ScheduledAt < dayEnd
+                     && blockingStatuses.Contains(m.Status))
+            .Select(m => m.ScheduledAt)
+            .OrderBy(m => m)
             .ToListAsync(cancellationToken);
     }
 }

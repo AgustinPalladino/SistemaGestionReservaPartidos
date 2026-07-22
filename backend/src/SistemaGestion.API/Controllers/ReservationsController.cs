@@ -1,9 +1,10 @@
 using Application.Interfaces;
 using Application.Interfaces.Persistence.Repositories;
+using Application.Models.Reservations;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using SistemaGestion.API.Models.Reservations;
+using ApiReservationsModels = SistemaGestion.API.Models.Reservations;
 
 namespace SistemaGestion.API.Controllers;
 
@@ -39,9 +40,30 @@ public class ReservationsController : ControllerBase
         return reservation is null ? NotFound() : Ok(reservation);
     }
 
+    [HttpGet("calendar")]
+    public async Task<ActionResult<IReadOnlyList<CalendarEventDto>>> GetCalendarEvents(
+        [FromQuery] int fieldId,
+        [FromQuery] int year,
+        [FromQuery] int month,
+        CancellationToken cancellationToken)
+    {
+        var events = await _scheduleService.GetCalendarEventsAsync(fieldId, year, month, cancellationToken);
+        return Ok(events);
+    }
+
+    [HttpGet("available")]
+    public async Task<ActionResult<IReadOnlyList<AvailableHourDto>>> GetAvailableHours(
+        [FromQuery] int fieldId,
+        [FromQuery] DateOnly date,
+        CancellationToken cancellationToken)
+    {
+        var hours = await _scheduleService.GetAvailableHoursAsync(fieldId, date, cancellationToken);
+        return Ok(hours);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Reservation>> Create(
-        [FromBody] CreateReservationRequest request,
+        [FromBody] ApiReservationsModels.CreateReservationRequest request,
         CancellationToken cancellationToken)
     {
         if (await _fields.GetByIdAsync(request.FieldId, cancellationToken) is null)
