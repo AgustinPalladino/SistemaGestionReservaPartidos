@@ -13,7 +13,7 @@ Asumí la responsabilidad completa del ciclo de vida del software:
 - **Desarrollo Backend & Frontend:** Diseñé una arquitectura limpia y escalable en el backend con .NET 8 y PostgreSQL, integrándolo con una interfaz reactiva y amigable desarrollada en React + Vite.
 - **Gestión Ágil con Jira (Scrum):** Para organizar los requerimientos de forma profesional como se trabaja en empresas de tecnología, utilicé **Jira** para estructurar el desarrollo mediante el marco **Scrum**. Dividí las funcionalidades en Sprints, Historias de Usuario, tareas con Criterios de Aceptación y seguimiento de estados (To Do, In Progress, Done).
 
-> 🔗 **Tablero de Jira:** Puedes revisar el backlog, la planificación de sprints y la gestión de tareas en tiempo real desde [Tablero - SCRUM Sprint 0 - Jira](https://palladinospace.atlassian.net/jira/software/projects/SCRUM/boards/1).
+> 🔗 **Tablero de Jira:** Puedes revisar el backlog, la planificación de sprints y la gestión de tareas en tiempo real en la imagen ![Tablero de Jira](./tablero-jira.png).
 
 ---
 
