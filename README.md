@@ -66,8 +66,27 @@ dotnet ef database update `
 cd frontend
 npm run dev
 
+## 🧪 Testing End-to-End (E2E)
 
-## Endpoints principales
+El proyecto cuenta con suites de pruebas automatizadas E2E utilizando **Playwright**.
+Por qué usamos E2E:
+- Porque prueba la aplicación como la ve el usuario final.
+- Porque asegura que la UI reacciona correctamente a la selección de fecha.
+- Porque cubre la integración entre frontend y el endpoint /api/reservations/available.
+- Porque detecta fallos de flujo que no se ven en tests unitarios o de componentes.
+
+### Casos de prueba cubiertos:
+* Selección interactiva de fechas en el calendario.
+* Consulta dinámica de disponibilidad mediante el endpoint `GET /api/reservations/available`.
+* Confirmación de reserva y actualización inmediata del estado en la UI.
+
+### Ejecución de pruebas E2E:
+```powershell
+cd frontend
+npm run test:e2e
+
+
+### Endpoints principales
 
 | Recurso | Ruta base |
 |---------|-----------|
@@ -78,8 +97,9 @@ npm run dev
 | Equipos | `GET/POST /api/tournaments/{id}/teams` |
 | Partidos | `GET/POST /api/tournaments/{id}/matches`, `PATCH .../score` |
 
-## Capas (Clean Architecture)
+### Capas (Clean Architecture)
 
-- **Application**: lógica de negocio y puertos (`Interfaces/Persistence/Repositories/`).
-- **Infrastructure**: EF Core, repositorios, bloqueos PostgreSQL.
-- **SistemaGestion.API**: controllers y modelos HTTP.
+- **Domain** (`backend/src/Domain`): Entidades y enums del negocio. Independiente de infraestructura.
+- **Application** (`backend/src/Application`): Interfaces + lógica de negocio. Servicios, validaciones y DTOs.
+- **Infrastructure** (`backend/src/Infrastructure`): EF Core, repositorios, persistencia. Implementa acceso a datos.
+- **API** (`backend/src/SistemaGestion.API`): Controladores REST y startup. Expone los endpoints HTTP.
