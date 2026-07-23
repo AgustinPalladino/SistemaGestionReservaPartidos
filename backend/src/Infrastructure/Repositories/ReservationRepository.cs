@@ -1,5 +1,6 @@
 using Application.Interfaces.Persistence.Repositories;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,22 @@ public class ReservationRepository : IReservationRepository
             .Include(r => r.User)
             .Include(r => r.Field)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+    public Task<bool> ExistsActiveReservationForUserAsync(
+        Guid userId,
+        int fieldId,
+        DateOnly date,
+        TimeOnly startTime,
+        TimeOnly endTime,
+        CancellationToken cancellationToken = default)
+        => _context.Reservations.AnyAsync(r =>
+            r.UserId == userId
+            && r.FieldId == fieldId
+            && r.Date == date
+            && r.Status != ReservationStatus.Cancelled
+            && r.StartTime < endTime
+            && startTime < r.EndTime,
+            cancellationToken);
 
     public async Task<Reservation> AddAsync(Reservation reservation, CancellationToken cancellationToken = default)
     {

@@ -3,6 +3,7 @@ using Application.Interfaces.Persistence.Repositories;
 using Application.Models.Reservations;
 using Domain.Entities;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiReservationsModels = SistemaGestion.API.Models.Reservations;
 
@@ -61,19 +62,41 @@ public class ReservationsController : ControllerBase
         return Ok(hours);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<Reservation>> Create(
         [FromBody] ApiReservationsModels.CreateReservationRequest request,
         CancellationToken cancellationToken)
     {
+        if (request.UserId == Guid.Empty || request.FieldId <= 0 || request.TotalAmount <= 0)
+        {
+            return BadRequest(new { message = "Faltan campos obligatorios o el payload es inválido." });
+        }
+
+        if (request.EndTime <= request.StartTime)
+        {
+            return BadRequest(new { message = "La hora de fin debe ser posterior a la de inicio." });
+        }
+
         if (await _fields.GetByIdAsync(request.FieldId, cancellationToken) is null)
         {
-            return BadRequest(new { message = "La cancha no existe." });
+            return NotFound(new { message = "La cancha no existe." });
         }
 
         if (await _users.GetByIdAsync(request.UserId, cancellationToken) is null)
         {
-            return BadRequest(new { message = "El usuario no existe." });
+            return NotFound(new { message = "El usuario no existe." });
+        }
+
+        if (await _reservations.ExistsActiveReservationForUserAsync(
+                request.UserId,
+                request.FieldId,
+                request.Date,
+                request.StartTime,
+                request.EndTime,
+                cancellationToken))
+        {
+            return Conflict(new { message = "El usuario ya tiene una reserva activa superpuesta en ese horario." });
         }
 
         if (await _scheduleService.HasScheduleConflictAsync(
