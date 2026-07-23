@@ -1,7 +1,11 @@
 using Application;
 using Infrastructure;
 using Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +17,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(connectionString);
+
+builder.Services.AddAuthentication("Test")
+    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", _ => { });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -50,7 +59,43 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Frontend");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
+
+public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+{
+    public TestAuthHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder)
+        : base(options, logger, encoder)
+    {
+    }
+
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        var auth = Request.Headers.Authorization.ToString();
+
+        if (!auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            return Task.FromResult(AuthenticateResult.Fail("Missing token"));
+        }
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Name, "test-user")
+        };
+
+        var identity = new ClaimsIdentity(claims, Scheme.Name);
+        var principal = new ClaimsPrincipal(identity);
+        var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+        return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+}

@@ -23,11 +23,15 @@ public class ScheduleConflictCoordinator : IScheduleConflictCoordinator
             IsolationLevel.Serializable,
             cancellationToken);
 
-        var lockKey = (long)fieldId * 1_000_000L + date.DayNumber;
-        await _context.Database.ExecuteSqlRawAsync(
-            "SELECT pg_advisory_xact_lock({0})",
-            [lockKey],
-            cancellationToken);
+        var provider = _context.Database.ProviderName;
+        if (provider?.Contains("Npgsql", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            var lockKey = (long)fieldId * 1_000_000L + date.DayNumber;
+            await _context.Database.ExecuteSqlRawAsync(
+                "SELECT pg_advisory_xact_lock({0})",
+                [lockKey],
+                cancellationToken);
+        }
 
         return new ScheduleConflictScope(transaction);
     }
